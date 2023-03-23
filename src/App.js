@@ -1,3 +1,5 @@
+import VideoPlayer from "./components/Video";
+
 export const App = () => {
-  return <div></div>;
+  return <VideoPlayer />;
 };
