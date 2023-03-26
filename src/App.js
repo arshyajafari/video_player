@@ -1,5 +1,9 @@
-import VideoPlayer from "./components/Video";
+// components
+import VideoPlayer from "./page";
 
-export const App = () => {
+// import css file
+import "./App.css";
+
+export default function App() {
   return <VideoPlayer />;
-};
+}

@@ -1,0 +1,16 @@
+@font-face {
+  font-family: "IRANSans";
+  src: local("IRANSans"), url(./fonts/IRANSans.ttf) format("truetype");
+}
+
+* {
+  font-family: "IRANSans" !important;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: rgba(33, 33, 33, 0.8);
+  backdrop-filter: blur(4px);
+  margin: 0px;
+  padding: 0px;
+}
