@@ -17,6 +17,7 @@ import {
   TbVolume,
   TbDashboard,
   TbPictureInPictureOn,
+  TbMaximizeOff,
   TbMaximize,
 } from "react-icons/tb";
 
@@ -36,6 +37,8 @@ import {
   GridCenterItemStyled,
   GridRightItemStyled,
   SpeedVideoListBox,
+  ErrorMessageBox,
+  ErrorMessageText,
 } from "./Video.style";
 
 // import video
@@ -50,6 +53,7 @@ export default function VideoPlayer() {
   const [volumeIcon, setVolumeIcon] = useState("low");
   const [pauseVideoIcon, setPauseVideoIcon] = useState(false);
   const [speedVideoIcon, setSpeedVideoIcon] = useState(false);
+  const [fullscreenIcon, setFullscreenIcon] = useState(false);
 
   // slider value state
   const [progressPosition, setProgressPosition] = useState(0);
@@ -65,8 +69,8 @@ export default function VideoPlayer() {
   // playback video handler
   const handlerVideoSpeed = () => setSpeedVideoIcon((state) => !state);
 
-  // fullscreen icon handler
-  // const handlerVideoFullScreen = () =>
+  // fullscreen video handler
+  const handlerVideoFullscreen = () => setFullscreenIcon((state) => !state);
 
   // select video player
   const videoObject = () =>
@@ -75,23 +79,17 @@ export default function VideoPlayer() {
   // play video function
   const playedVideo = () => {
     const video = videoObject();
-    // const centerPlayButton = document.querySelector("#play-button");
-    // const controlsBar = document.querySelector("#controls-bar");
+    const centerPlayButton = document.querySelector("#playIcon");
 
     setPauseVideoIcon((state) => !state);
     setProgressPosition(video.currentTime);
 
     if (video.paused) {
       video.play();
-      // centerPlayButton.style.display = "none";
-      // controlsBar.style.display = "block";
-      // setTimeout(() => {
-      //   controlsBar.style.display = "none";
-      // }, 2000);
+      centerPlayButton.style.display = "none";
     } else {
       video.pause();
-      // centerPlayButton.style.display = "block";
-      // controlsBar.style.display = "none";
+      centerPlayButton.style.display = "block";
     }
   };
 
@@ -168,71 +166,9 @@ export default function VideoPlayer() {
     }
   };
 
-  // // keyboard event function
-  // const keyHandler = (e) => {
-  //   const videoPlayer = videoPlayerObject();
-  //   switch (e.keyCode) {
-  //     case 37:
-  //       videoPlayer.currentTime -= 5;
-  //       setProgressPosition(videoPlayer.currentTime);
-  //       break;
-  //     case 39:
-  //       videoPlayer.currentTime += 5;
-  //       setProgressPosition(videoPlayer.currentTime);
-  //       break;
-  //     case 38:
-  //       videoPlayer.volume += 5;
-  //       videoPlayer.volume /= 100;
-  //       setVolumePosition(videoPlayer.volume);
-  //       break;
-  //     case 40:
-  //       videoPlayer.volume -= 5;
-  //       videoPlayer.volume /= 100;
-  //       setVolumePosition(videoPlayer.volume);
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // };
-
-  // fullscreen video function
-  const fullScreenVideo = () => {
-    const video = videoObject();
-
-    var isInFullScreen =
-      (document.fullscreenElement && document.fullscreenElement !== null) ||
-      (document.webkitFullscreenElement &&
-        document.webkitFullscreenElement !== null) ||
-      (document.mozFullScreenElement &&
-        document.mozFullScreenElement !== null) ||
-      (document.msFullscreenElement && document.msFullscreenElement !== null);
-
-    if (!isInFullScreen) {
-      if (video.requestFullscreen) {
-        video.requestFullscreen();
-      } else if (video.mozRequestFullScreen) {
-        video.mozRequestFullScreen();
-      } else if (video.webkitRequestFullScreen) {
-        video.webkitRequestFullScreen();
-      } else if (video.msRequestFullscreen) {
-        video.msRequestFullscreen();
-      }
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen();
-      } else if (document.msExitFullscreen) {
-        document.msExitFullscreen();
-      }
-    }
-  };
-
   setTimeout(() => {
     const video = videoObject();
-    // const centerPlayButton = document.querySelector("#play-button");
+    const centerPlayButton = document.querySelector("#playIcon");
 
     setDurationVideo(video.duration);
 
@@ -240,7 +176,7 @@ export default function VideoPlayer() {
 
     if (video.currentTime === video.duration) {
       stoppedVideo();
-      // centerPlayButton.style.display = "block";
+      centerPlayButton.style.display = "block";
     }
 
     setProgressPosition(video.currentTime);
@@ -249,19 +185,30 @@ export default function VideoPlayer() {
   return (
     <Fragment>
       <GridVideoPlayerBox container>
-        <GridVideoPlayerStyled item xs={12}>
+        <GridVideoPlayerStyled
+          item
+          xs={12}
+          fullscreen={fullscreenIcon ? fullscreenIcon : null}
+        >
+          {/* video src */}
           <VideoPlayerStyled
             src={src}
             id="video"
             type="video/*"
             onClick={() => playedVideo()}
+            fullscreen={fullscreenIcon ? fullscreenIcon : null}
           />
 
-          <IconButtonCenterStyled onClick={() => playedVideo()}>
+          {/* center icon */}
+          <IconButtonCenterStyled id="playIcon" onClick={() => playedVideo()}>
             {pauseVideoIcon ? <TbPlayerPauseFilled /> : <TbPlayerPlayFilled />}
           </IconButtonCenterStyled>
 
-          <ControllerGridBox container>
+          {/* video controllers */}
+          <ControllerGridBox
+            container
+            fullscreen={fullscreenIcon ? fullscreenIcon : null}
+          >
             <Grid item xs={12}>
               <Slider
                 size="small"
@@ -335,12 +282,19 @@ export default function VideoPlayer() {
               <IconButtonCM onClick={picInPicVideo}>
                 <TbPictureInPictureOn />
               </IconButtonCM>
-              <IconButtonCM onClick={fullScreenVideo}>
-                <TbMaximize />
+              <IconButtonCM onClick={handlerVideoFullscreen}>
+                {fullscreenIcon ? <TbMaximizeOff /> : <TbMaximize />}
               </IconButtonCM>
             </GridRightItemStyled>
           </ControllerGridBox>
         </GridVideoPlayerStyled>
+
+        {/* error message */}
+        <ErrorMessageBox>
+          <ErrorMessageText>
+            This video player is not designed for this device.
+          </ErrorMessageText>
+        </ErrorMessageBox>
       </GridVideoPlayerBox>
 
       {/* <Grid container>

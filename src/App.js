@@ -1,3 +1,6 @@
+// hooks
+import { Fragment } from "react";
+
 // components
 import VideoPlayer from "./page";
 
@@ -5,5 +8,9 @@ import VideoPlayer from "./page";
 import "./App.css";
 
 export default function App() {
-  return <VideoPlayer />;
+  return (
+    <Fragment>
+      <VideoPlayer />
+    </Fragment>
+  );
 }
